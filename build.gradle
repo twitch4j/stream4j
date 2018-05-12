@@ -74,9 +74,9 @@ bintray {
     publish = true
     pkg {
         // jcenter repository namespace and name
-        userOrg = System.getenv('CI_PROJECT_NAMESPACE')
+        userOrg = String.valueOf(System.getenv('CI_PROJECT_NAMESPACE')).toLowerCase()
         repo = 'maven'
-        name = project.name
+        name =  String.valueOf(project.name).toLowerCase()
         desc = project.description
         licenses = ['MIT']
         vcsUrl = System.getenv('CI_REPOSITORY_URL')
