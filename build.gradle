@@ -1,16 +1,91 @@
 plugins {
     id 'java'
+    id 'idea'
+    id 'eclipse'
+    id 'maven-publish'
+    id 'com.jfrog.bintray' version '1.8.0'
 }
 
-group 'test'
-version '1.0-SNAPSHOT'
+group = "com.github.philippheuer"
+description = "This is a template project for java library projects."
+version = System.getenv('CI_COMMIT_REF_NAME')
 
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
+    // your dependencies
+}
 
+/**
+ * Sources - build a jar with source files
+ */
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Builds the sourcesJar.', group: 'build') {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: javadoc, description: 'Builds the javadocJar.', group: 'build') {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+/**
+ * Artifacts
+ */
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+/**
+ * Deployment
+ */
+publishing {
+    publications {
+        mainProject(MavenPublication) {
+            from project.components.java
+            artifact sourcesJar
+            artifact javadocJar
+            groupId project.group
+            artifactId project.name
+            version project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode("description", project.description)
+                root.appendNode("name", project.name)
+            }
+        }
+    }
+}
+
+/**
+ * Bintray Upload
+ */
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+    publications = ['mainProject']
+    dryRun = false
+    publish = true
+    pkg {
+        // jcenter repository namespace and name
+        userOrg = System.getenv('CI_PROJECT_NAMESPACE')
+        repo = 'maven'
+        name = project.name
+        desc = project.description
+        licenses = ['MIT']
+        vcsUrl = System.getenv('CI_REPOSITORY_URL')
+        labels = []
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+            vcsTag = project.version
+            released  = new Date()
+        }
+    }
 }
