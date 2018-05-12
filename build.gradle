@@ -53,7 +53,7 @@ publishing {
             artifact javadocJar
             groupId project.group
             artifactId project.name
-            version project.version
+            version String.valueOf(project.version).replace("v", "")
             pom.withXml {
                 def root = asNode()
                 root.appendNode("description", project.description)
@@ -83,7 +83,7 @@ bintray {
         labels = []
         publicDownloadNumbers = true
         version {
-            name = project.version
+            name = String.valueOf(project.version).replace("v", "")
             vcsTag = project.version
             released  = new Date()
         }
