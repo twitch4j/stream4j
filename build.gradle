@@ -3,89 +3,63 @@ plugins {
     id 'idea'
     id 'eclipse'
     id 'maven-publish'
+    id "net.ltgt.apt" version "0.15"
+    id "net.ltgt.apt-idea" version "0.15"
+    id "net.ltgt.apt-eclipse" version "0.15"
     id 'com.jfrog.bintray' version '1.8.0'
+    id "io.spring.dependency-management" version "1.0.5.RELEASE"
 }
 
-group = "com.github.philippheuer"
-description = "This is a template project for java library projects."
-version = System.getenv('CI_COMMIT_REF_NAME')
+apply from: "deploy.gradle"
+
+def versioning() {
+    Map<String, String> env = System.getenv()
+
+    if (env.containsKey('TRAVIS_TAG')) {
+        return env.get('TRAVIS_TAG')
+    } else if (env.containsKey('CI_COMMIT_TAG')) {
+        return System.getenv('CI_COMMIT_TAG')
+    } else {
+        return "1.0.0-SNAPSHOT"
+    }
+}
+
+group = "com.github.twitch4j"
+description = "Reactive Streams with Twitch4J style"
+version = versioning()
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     jcenter()
 }
 
+dependencyManagement {
+    imports {
+        mavenBom 'io.projectreactor:reactor-bom:Bismuth-SR9'
+        mavenBom 'com.fasterxml.jackson:jackson-bom:2.9.5'
+    }
+}
+
 dependencies {
-    // your dependencies
+    compile 'io.projectreactor:reactor-core'
+    compile 'com.google.guava:guava:25.1-jre'
+    compile 'io.projectreactor.ipc:reactor-netty'
+    compile 'io.projectreactor.addons:reactor-extra'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8'
+
+    compileOnly 'org.projectlombok:lombok:1.18.0'
+    annotationProcessor 'org.projectlombok:lombok:1.18.0'
+
+    testCompile 'junit:junit:4.12'
+    testCompile 'io.projectreactor:reactor-test'
+    testCompile 'org.mockito:mockito-core:2.18.3'
 }
 
-/**
- * Sources - build a jar with source files
- */
-task sourcesJar(type: Jar, dependsOn: classes, description: 'Builds the sourcesJar.', group: 'build') {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-
-// build a jar with javadoc
-task javadocJar(type: Jar, dependsOn: javadoc, description: 'Builds the javadocJar.', group: 'build') {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-/**
- * Artifacts
- */
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-/**
- * Deployment
- */
-publishing {
-    publications {
-        mainProject(MavenPublication) {
-            from project.components.java
-            artifact sourcesJar
-            artifact javadocJar
-            groupId project.group
-            artifactId project.name
-            version String.valueOf(project.version).replace("v", "")
-            pom.withXml {
-                def root = asNode()
-                root.appendNode("description", project.description)
-                root.appendNode("name", project.name)
-            }
-        }
-    }
-}
-
-/**
- * Bintray Upload
- */
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_API_KEY')
-    publications = ['mainProject']
-    dryRun = false
-    publish = true
-    pkg {
-        // jcenter repository namespace and name
-        userOrg = String.valueOf(System.getenv('CI_PROJECT_NAMESPACE')).toLowerCase()
-        repo = 'maven'
-        name =  String.valueOf(project.name).toLowerCase()
-        desc = project.description
-        licenses = ['MIT']
-        vcsUrl = System.getenv('CI_REPOSITORY_URL')
-        labels = []
-        publicDownloadNumbers = true
-        version {
-            name = String.valueOf(project.version).replace("v", "")
-            vcsTag = project.version
-            released  = new Date()
-        }
-    }
+wrapper {
+    gradleVersion = "4.8"
+    distributionType = Wrapper.DistributionType.ALL
 }

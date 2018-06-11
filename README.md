@@ -1,10 +1,9 @@
-# Java - Library Template
+# Reactive Data Streams
 
-## Features:
+### TODO
 
-- Publish to jCenter
-- JavaDocs
-- GitLab CI for automated deployments of tags
+* [ ] [Rate Limits](https://dev.twitch.tv/docs/api/guide/#rate-limits) reading from headers.
+* [ ] Websocket Client for PubSub and Message Interface
 
 ## License
 

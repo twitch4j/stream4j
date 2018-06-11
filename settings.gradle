@@ -1,2 +1,3 @@
-rootProject.name = 'library-template'
+rootProject.name = 'stream4j'
 
+enableFeaturePreview('STABLE_PUBLISHING')
