@@ -37,7 +37,7 @@ repositories {
 
 dependencyManagement {
     imports {
-        mavenBom 'io.projectreactor:reactor-bom:Bismuth-SR9'
+        mavenBom 'io.projectreactor:reactor-bom:Bismuth-SR10'
         mavenBom 'com.fasterxml.jackson:jackson-bom:2.9.5'
     }
 }
@@ -60,6 +60,6 @@ dependencies {
 }
 
 wrapper {
-    gradleVersion = "4.8"
+    gradleVersion = "4.8.1"
     distributionType = Wrapper.DistributionType.ALL
 }

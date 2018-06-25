@@ -4,10 +4,14 @@ import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import java.util.ArrayList;
 import java.util.List;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import reactor.ipc.netty.http.client.HttpClient;
 import twitch4j.stream.rest.http.ReaderStrategy;
 import twitch4j.stream.rest.http.WriterStrategy;
 
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 class SimpleHttpClientBuilder implements SimpleHttpClient.Builder {
 
 	private final HttpHeaders headers = new DefaultHttpHeaders();
@@ -41,6 +45,11 @@ class SimpleHttpClientBuilder implements SimpleHttpClient.Builder {
 
 	@Override
 	public SimpleHttpClient build() {
+		if (baseUrl == null || baseUrl.equals("")) {
+			throw new NullPointerException("Base URL must be not empty.");
+		} else if (!baseUrl.matches("(http[s]?)://(.+)/")) {
+			throw new IllegalArgumentException("Base URL must contain a URL");
+		}
 		return new SimpleHttpClient(HttpClient.create(options -> options.compression(true)), baseUrl, headers, writerStrategies, readerStrategies);
 	}
 }

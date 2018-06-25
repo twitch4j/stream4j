@@ -8,6 +8,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import javax.annotation.Nullable;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
@@ -26,6 +29,7 @@ import twitch4j.stream.rest.http.WriterStrategy;
  * @since 3.0
  */
 @Getter
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 public class SimpleHttpClient {
 
 	private static final Logger httpLogger = Loggers.getLogger(SimpleHttpClient.class);
@@ -35,15 +39,6 @@ public class SimpleHttpClient {
 	private final HttpHeaders defaultHeaders;
 	private final List<WriterStrategy<?>> writerStrategies;
 	private final List<ReaderStrategy<?>> readerStrategies;
-
-	SimpleHttpClient(HttpClient httpClient, String baseUrl, HttpHeaders defaultHeaders,
-					 List<WriterStrategy<?>> writerStrategies, List<ReaderStrategy<?>> readerStrategies) {
-		this.httpClient = httpClient;
-		this.baseUrl = baseUrl;
-		this.defaultHeaders = defaultHeaders;
-		this.writerStrategies = writerStrategies;
-		this.readerStrategies = readerStrategies;
-	}
 
 	/**
 	 * Obtain a {@link twitch4j.stream.rest.http.client.SimpleHttpClient} builder.
