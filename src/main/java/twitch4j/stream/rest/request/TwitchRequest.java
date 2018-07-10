@@ -1,16 +1,14 @@
 package twitch4j.stream.rest.request;
 
-import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.MultimapBuilder;
+import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import reactor.core.publisher.Mono;
 import twitch4j.stream.rest.route.Route;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 /**
  * Encodes all of the needed information to make an HTTP request to Twitch.
@@ -109,7 +107,7 @@ public class TwitchRequest<T> {
 	 */
 	public TwitchRequest<T> header(String key, String value) {
 		if (headers == null) {
-			headers = ImmutableSetMultimap.of();
+			headers = MultimapBuilder.SetMultimapBuilder.linkedHashKeys().hashSetValues().build();
 		}
 		headers.put(key.toLowerCase(), value);
 		return this;
