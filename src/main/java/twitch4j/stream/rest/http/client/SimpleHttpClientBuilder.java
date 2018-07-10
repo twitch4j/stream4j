@@ -47,7 +47,7 @@ class SimpleHttpClientBuilder implements SimpleHttpClient.Builder {
 	public SimpleHttpClient build() {
 		if (baseUrl == null || baseUrl.equals("")) {
 			throw new NullPointerException("Base URL must be not empty.");
-		} else if (!baseUrl.matches("(http[s]?)://(.+)/")) {
+		} else if (!baseUrl.matches("(http[s]?)://(.+)")) {
 			throw new IllegalArgumentException("Base URL must contain a URL");
 		}
 		return new SimpleHttpClient(HttpClient.create(options -> options.compression(true)), baseUrl, headers, writerStrategies, readerStrategies);
